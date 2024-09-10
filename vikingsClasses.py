@@ -34,8 +34,9 @@ class Viking(Soldier): ## inherits from the soldier - attack
 # Saxon
 
 class Saxon(Soldier):
-    def __init__(self, health, strength):
+    def __init__(self, name, health, strength):
         super().__init__(health, strength)
+        self.name = name 
 
     def receiveDamage(self, damage):
         self.health -= damage
