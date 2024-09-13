@@ -1,34 +1,49 @@
 import random
 
+# Dictionary of weapons and their damage
+weapons = {
+    "Sword": 10,
+    "Axe": 12,
+    "Spear": 8,
+    "Bow": 7,
+    "Mace": 11
+}
+
 # Soldier
 class Soldier: 
-    def __init__(self, health, strength):   #function
+    def __init__(self, health, strength):   
         self.health = health
         self.strength = strength
     
     def attack(self):
-        return self.strength  # access the soldier's strength
+        return self.strength  # returns the soldier's strength
 
     def receiveDamage(self, damage):
-        self.health -= damage  # remove the damage from health also it can be coded as: self.health = self.health - damage
+        self.health -= damage  # reduces health by the damage amount
     
 
 # Viking
 
-class Viking(Soldier): ## inherits from the soldier - attack 
+class Viking(Soldier):  # inherits from Soldier
     def __init__(self, name, health, strength):
         super().__init__(health, strength)
-        self.name = name #1st argument
+        self.name = name  # first argument
+        self.weapon = random.choice(list(weapons.keys()))  # Assign a random weapon
+        self.weapon_damage = weapons[self.weapon]  # Get the damage associated with the weapon
+
+    def attack(self):
+        # The attack now includes the soldier's strength plus the weapon's damage
+        return self.strength + self.weapon_damage
 
     def battleCry(self):
         return "Odin Owns You All"
 
-    def receiveDamage(self, damage): #needs to be reimplementes as the viking does different things than the soldier
+    def receiveDamage(self, damage):  # reimplementation for Viking-specific behavior
         self.health -= damage
         if self.health > 0:
-            return f"{self.health} has received {damage} points of damage" ## f' = function
+            return f"{self.name} has received {damage} points of damage"
         else:
-            return f"{self.name} has died in act of combat" ## need to put a print so the messeage is printed out on the screen
+            return f"{self.name} has died in act of combat"
         
 
 # Saxon
@@ -37,6 +52,12 @@ class Saxon(Soldier):
     def __init__(self, name, health, strength):
         super().__init__(health, strength)
         self.name = name 
+        self.weapon = random.choice(list(weapons.keys()))  # Assign a random weapon
+        self.weapon_damage = weapons[self.weapon]  # Get the damage associated with the weapon
+
+    def attack(self):
+        # The attack now includes the soldier's strength plus the weapon's damage
+        return self.strength + self.weapon_damage
 
     def receiveDamage(self, damage):
         self.health -= damage
@@ -46,38 +67,34 @@ class Saxon(Soldier):
             return "A Saxon has died in combat"
 
 
-# how the war works
+# War mechanics
 
 class War():
-    def __init__(self): #constructor
-        ##created 2 empty lists to start adding the soldiers to each list
+    def __init__(self):  # constructor
+        # Create two empty lists to store soldiers in each army
         self.vikingArmy = [] 
         self.saxonArmy = []
 
     def addViking(self, viking):
-        self.vikingArmy.append(viking)  #adding vikings
+        self.vikingArmy.append(viking)  # Add a viking to the Viking army
     
     def addSaxon(self, saxon):
-        self.saxonArmy.append(saxon)   #adding saxons
+        self.saxonArmy.append(saxon)  # Add a saxon to the Saxon army
     
     def vikingAttack(self):
-        chosen_saxon = random.choice (self.saxonArmy)
+        chosen_saxon = random.choice(self.saxonArmy)
         chosen_viking = random.choice(self.vikingArmy)
         result = chosen_saxon.receiveDamage(chosen_viking.attack())
-        #checking if the saxon is dead to remove it, there are 2 options: 
-        #self.saxonArmy = [saxon for saxon in self.saxonArmy if saxon.health < 0]
         if chosen_saxon.health <= 0:  
-            self.saxonArmy.remove(chosen_saxon)
+            self.saxonArmy.remove(chosen_saxon)  # Remove dead Saxon from the army
         return result
 
     def saxonAttack(self):
-        chosen_saxon = random.choice (self.saxonArmy)
+        chosen_saxon = random.choice(self.saxonArmy)
         chosen_viking = random.choice(self.vikingArmy)
         result = chosen_viking.receiveDamage(chosen_saxon.attack())
-        #checking if the saxon is dead to remove it, there are 2 options: 
-        #self.vikingArmy = [viking for viking in self.vikingArmy if viking.health < 0]
         if chosen_viking.health <= 0:  
-            self.vikingArmy.remove(chosen_viking)
+            self.vikingArmy.remove(chosen_viking)  # Remove dead Viking from the army
         return result
 
     def showStatus(self):
@@ -87,4 +104,3 @@ class War():
             return "Saxons have fought for their lives and survive another day"
         else:
             return "Vikings and Saxons are still in the thick of battle."
-    pass
